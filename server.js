@@ -8,7 +8,7 @@ const port = process.env.PORT || 3000;
 // JSON 요청 본문을 파싱하기 위해 미들웨어를 추가합니다.
 app.use(express.json());
 
-const SPREADSHEET_ID = '1O5Ir42pvFjlul4Zuz3N13qmyKM0ez8ss_dvdVFveG50'; // Google Sheet 문서 URL에서 ID 부분
+const SPREADSHEET_ID = '1DBi-6Yyiup6VM6Pqr5wotPn1h1nftcEtZk072HnzetM'; // Google Sheet 문서 URL에서 ID 부분
 
 // Google 인증 설정
 const auth = new google.auth.GoogleAuth({
@@ -104,7 +104,7 @@ app.get("/api2/white-bc-values", async (req, res) => {
   try {
     const sheets = google.sheets({ version: "v4", auth });
 
-    const spreadsheetId = "18daZAEoIerMbLZitP7vEH_87_NcvB2vVZQb8Yx0ZSEY";
+    const spreadsheetId = "1mTc8DAC8bKcmcx31OREu3OC8lbP-pqBLZ3hXkR9McOw";
     const dayMap = {
       "첫째날 정량평가": 1,
       "둘째날 정량평가": 2,
