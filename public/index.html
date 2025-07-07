@@ -221,6 +221,7 @@
         >
           메인 대시보드
         </button>
+        
         <button
           data-tab="operation"
           class="tab-btn px-4 py-2 text-sm font-semibold text-slate-600 border-b-2 border-transparent hover:border-blue-500 hover:text-blue-500"
@@ -244,6 +245,7 @@
               현재 시점의 가장 중요한 정보들을 요약하여 보여줍니다.
             </p>
           </div>
+          
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
             <div class="bg-white p-6 rounded-lg shadow-sm">
               <h3 id="sound-summary-title" class="font-bold text-slate-800">
@@ -295,7 +297,65 @@
           </div>
         </div>
 
- 
+        <!-- Pre-Setup Content -->
+        <div id="setup-content" class="content-panel hidden">
+          <div class="mb-6">
+            <h2 class="text-xl font-bold mb-1">사전설치 공정표</h2>
+            <p class="text-slate-500 text-sm">
+              팀별 사전설치 작업의 진행 상태를 관리하고 추적합니다. (읽기 전용)
+            </p>
+          </div>
+          <div class="mb-4 flex space-x-2">
+            <button
+              data-team="All"
+              class="filter-btn team-filter-btn px-3 py-1 text-sm font-semibold rounded-md active"
+            >
+              전체
+            </button>
+            <button
+              data-team="오디오팀"
+              class="filter-btn team-filter-btn px-3 py-1 text-sm font-semibold rounded-md"
+            >
+              오디오팀
+            </button>
+            <button
+              data-team="비디오팀"
+              class="filter-btn team-filter-btn px-3 py-1 text-sm font-semibold rounded-md"
+            >
+              비디오팀
+            </button>
+            <button
+              data-team="무대팀"
+              class="filter-btn team-filter-btn px-3 py-1 text-sm font-semibold rounded-md"
+            >
+              무대팀
+            </button>
+            <button
+              data-team="IT팀"
+              class="filter-btn team-filter-btn px-3 py-1 text-sm font-semibold rounded-md"
+            >
+              IT팀
+            </button>
+          </div>
+          <div class="bg-white rounded-lg shadow-sm overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead class="bg-slate-100 text-slate-600">
+                <tr>
+                  <th class="p-3">팀</th>
+                  <th class="p-3">작업 항목</th>
+                  <th class="p-3">담당자</th>
+                  <th class="p-3">예상 소요</th>
+                  <th class="p-3">시작 예정</th>
+                  <th class="p-3 text-center">완료 여부</th>
+                </tr>
+              </thead>
+              <tbody id="setup-tasks-table">
+                <!-- Setup tasks will be populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
         <!-- Operation Content -->
         <div id="operation-content" class="content-panel hidden">
           <div class="mb-6">
