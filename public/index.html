@@ -3,14 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>고양04 지역대회 AV부 통합 관리 대시보드</title>
+    <title>고양05 지역대회 AV부 통합 관리 대시보드</title>
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no"
     />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="고양04 AV대시보드" />
+    <meta name="apple-mobile-web-app-title" content="고양05 AV대시보드" />
     <link rel="icon" href="/icons/icon-180x180-admin.png" sizes="any">
     <link rel="apple-touch-icon" href="/icons/icon-180x180-admin.png" />
     <script src="https://cdn.tailwindcss.com"></script>
@@ -184,7 +184,7 @@
       <header class="mb-6 flex justify-between items-center">
         <div>
           <h1 class="text-3xl font-bold text-slate-900">
-            고양04 지역대회 AV부 통합 관리 대시보드
+            고양05 지역대회 AV부 통합 관리 대시보드
           </h1>
           <p class="text-slate-600 mt-1">
             대회 전 사전설치부터 운영까지 모든 현황을 실시간으로 관리합니다.
@@ -420,22 +420,22 @@
           </div>
           <div class="mb-4 flex space-x-2">
             <button
-              data-day="2025-07-04"
+              data-day="2025-07-11"
               class="filter-btn op-day-filter px-3 py-1 text-sm font-semibold rounded-md active"
             >
-              7월 4일 (1일차)
+              7월 11일 (1일차)
             </button>
             <button
-              data-day="2025-07-05"
+              data-day="2025-07-12"
               class="filter-btn op-day-filter px-3 py-1 text-sm font-semibold rounded-md"
             >
-              7월 5일 (2일차)
+              7월 12일 (2일차)
             </button>
             <button
-              data-day="2025-07-06"
+              data-day="2025-07-13"
               class="filter-btn op-day-filter px-3 py-1 text-sm font-semibold rounded-md"
             >
-              7월 6일 (3일차)
+              7월 13일 (3일차)
             </button>
           </div>
           <div class="bg-white rounded-lg shadow-sm overflow-x-auto">
@@ -598,7 +598,7 @@
       const state = {
         activeTab: "dashboard",
         setupFilter: "All",
-        operationDay: "2025-07-04",
+        operationDay: "2025-07-11",
         soundFilter: { day: 1, time: 1 },
       };
 
@@ -680,9 +680,9 @@
 
         // === 음향 상태 요약 ===
         const competitionDateMap = {
-          1: "2025-07-04",
-          2: "2025-07-05",
-          3: "2025-07-06",
+          1: "2025-07-11",
+          2: "2025-07-12",
+          3: "2025-07-13",
         };
         let closestDataGroup = [];
         let dayToDisplay = 1;
