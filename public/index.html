@@ -1039,9 +1039,6 @@
           case "dashboard":
             renderDashboard();
             break;
-          case "setup":
-            renderSetupTable();
-            break;
           case "operation":
             renderOperationSchedule();
             break;
@@ -1077,9 +1074,6 @@
           });
 
         document.querySelector("nav").addEventListener("click", handleNavClick);
-        document
-          .getElementById("setup-content")
-          .addEventListener("click", handleFilterClick);
         document
           .getElementById("operation-content")
           .addEventListener("click", handleFilterClick);
