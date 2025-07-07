@@ -250,7 +250,7 @@
               현재 시점의 가장 중요한 정보들을 요약하여 보여줍니다.
             </p>
           </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <!--div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div class="bg-white p-6 rounded-lg shadow-sm">
               <h3 class="font-bold text-slate-800 mb-2">전체 공정 진행률</h3>
               <div class="chart-container h-48 w-48 mx-auto">
@@ -299,7 +299,7 @@
               
               </div>
             </div>
-          </div>
+          </div-->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
             <div class="bg-white p-6 rounded-lg shadow-sm">
               <h3 id="sound-summary-title" class="font-bold text-slate-800">
@@ -606,78 +606,7 @@
 
       // --- RENDER FUNCTIONS ---
       function renderDashboard() {
-        // === 진행률 차트 ===
-        const teamProgress = {};
-        const teams = [...new Set(db.setupTasks.map((t) => t.team))];
-        teams.forEach((team) => {
-          const teamTasks = db.setupTasks.filter((t) => t.team === team);
-          teamProgress[team] = {
-            total: teamTasks.length,
-            completed: teamTasks.filter((t) => t.completed).length,
-          };
-        });
-
-        const overall = {
-          total: db.setupTasks.length,
-          completed: db.setupTasks.filter((t) => t.completed).length,
-        };
-
-        if (overall.total > 0) {
-          renderDonutChart(
-            "overallProgressChart",
-            "전체",
-            overall.completed,
-            overall.total
-          );
-          renderDonutChart(
-            "audioProgressChart",
-            "오디오팀",
-            teamProgress["오디오팀"]?.completed || 0,
-            teamProgress["오디오팀"]?.total || 0
-          );
-          renderDonutChart(
-            "videoProgressChart",
-            "비디오팀",
-            teamProgress["비디오팀"]?.completed || 0,
-            teamProgress["비디오팀"]?.total || 0
-          );
-          renderDonutChart(
-            "stageProgressChart",
-            "무대팀",
-            teamProgress["무대팀"]?.completed || 0,
-            teamProgress["무대팀"]?.total || 0
-          );
-          renderDonutChart(
-            "itProgressChart",
-            "IT팀",
-            teamProgress["IT팀"]?.completed || 0,
-            teamProgress["IT팀"]?.total || 0
-          );
-        }
-
-        // === 지연된 작업 표시 ===
-        const now = new Date();
-        const delayedTasksList = document.getElementById("delayed-tasks-list");
-        delayedTasksList.innerHTML = "";
-        const delayedTasks = db.setupTasks.filter((task) => {
-          if (!task.start) return false;
-          const startTime = new Date(task.start);
-          const endTime = new Date(startTime.getTime() + task.duration * 60000);
-          return !task.completed && now > endTime;
-        });
-
-        if (delayedTasks.length > 0) {
-          delayedTasks.forEach((task) => {
-            delayedTasksList.innerHTML += `
-        <div class="flex justify-between items-center bg-red-50 p-2 rounded">
-          <span><span class="font-semibold">${task.team}</span> - ${task.task}</span>
-          <span class="text-red-600 font-bold">지연</span>
-        </div>`;
-          });
-        } else {
-          delayedTasksList.innerHTML = `<p class="text-slate-500">지연된 작업이 없습니다.</p>`;
-        }
-
+        
         // === 음향 상태 요약 ===
         const competitionDateMap = {
           1: "2025-07-11",
