@@ -3,14 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>고양05 지역대회 AV부 통합 관리 대시보드</title>
+    <title>고양04 지역대회 AV부 통합 관리 대시보드</title>
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no"
     />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="고양05 AV대시보드" />
+    <meta name="apple-mobile-web-app-title" content="고양04 AV대시보드" />
     <link rel="icon" href="/icons/icon-180x180-admin.png" sizes="any">
     <link rel="apple-touch-icon" href="/icons/icon-180x180-admin.png" />
     <script src="https://cdn.tailwindcss.com"></script>
@@ -184,7 +184,7 @@
       <header class="mb-6 flex justify-between items-center">
         <div>
           <h1 class="text-3xl font-bold text-slate-900">
-            고양05 지역대회 AV부 통합 관리 대시보드
+            고양04 지역대회 AV부 통합 관리 대시보드
           </h1>
           <p class="text-slate-600 mt-1">
             대회 전 사전설치부터 운영까지 모든 현황을 실시간으로 관리합니다.
@@ -221,7 +221,12 @@
         >
           메인 대시보드
         </button>
-        
+        <button
+          data-tab="setup"
+          class="tab-btn px-4 py-2 text-sm font-semibold text-slate-600 border-b-2 border-transparent hover:border-blue-500 hover:text-blue-500"
+        >
+          사전설치 공정표
+        </button>
         <button
           data-tab="operation"
           class="tab-btn px-4 py-2 text-sm font-semibold text-slate-600 border-b-2 border-transparent hover:border-blue-500 hover:text-blue-500"
@@ -245,7 +250,56 @@
               현재 시점의 가장 중요한 정보들을 요약하여 보여줍니다.
             </p>
           </div>
-          
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+              <h3 class="font-bold text-slate-800 mb-2">전체 공정 진행률</h3>
+              <div class="chart-container h-48 w-48 mx-auto">
+                <canvas id="overallProgressChart"></canvas>
+              </div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+              <h3 class="font-bold text-slate-800 mb-2">팀별 진행률</h3>
+              <div class="grid grid-cols-2 gap-4 pt-2">
+                <div class="text-center">
+                  <div class="chart-container h-20 w-20 mx-auto">
+                    <canvas id="audioProgressChart"></canvas>
+                  </div>
+                  <p class="text-xs font-semibold mt-2">오디오팀</p>
+                </div>
+                <div class="text-center">
+                  <div class="chart-container h-20 w-20 mx-auto">
+                    <canvas id="videoProgressChart"></canvas>
+                  </div>
+                  <p class="text-xs font-semibold mt-2">비디오팀</p>
+                </div>
+                <div class="text-center">
+                  <div class="chart-container h-20 w-20 mx-auto">
+                    <canvas id="stageProgressChart"></canvas>
+                  </div>
+                  <p class="text-xs font-semibold mt-2">무대팀</p>
+                </div>
+                <div class="text-center">
+                  <div class="chart-container h-20 w-20 mx-auto">
+                    <canvas id="itProgressChart"></canvas>
+                  </div>
+                  <p class="text-xs font-semibold mt-2">IT팀</p>
+                </div>
+              </div>
+            </div>
+            <div
+              class="bg-white p-6 rounded-lg shadow-sm md:col-span-2 lg:col-span-2"
+            >
+              <h3 class="font-bold text-slate-800 mb-2">
+                주의! 지연 작업 목록
+              </h3>
+              <div
+                id="delayed-tasks-list"
+                class="space-y-2 text-sm max-h-48 overflow-y-auto"
+              >
+                <!-- Delayed tasks will be populated by JS -->
+              </div>
+            </div>
+          </div>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
             <div class="bg-white p-6 rounded-lg shadow-sm">
               <h3 id="sound-summary-title" class="font-bold text-slate-800">
@@ -366,22 +420,22 @@
           </div>
           <div class="mb-4 flex space-x-2">
             <button
-              data-day="2025-07-11"
+              data-day="2025-07-04"
               class="filter-btn op-day-filter px-3 py-1 text-sm font-semibold rounded-md active"
             >
-              7월 11일 (1일차)
+              7월 4일 (1일차)
             </button>
             <button
-              data-day="2025-07-12"
+              data-day="2025-07-05"
               class="filter-btn op-day-filter px-3 py-1 text-sm font-semibold rounded-md"
             >
-              7월 12일 (2일차)
+              7월 5일 (2일차)
             </button>
             <button
-              data-day="2025-07-13"
+              data-day="2025-07-06"
               class="filter-btn op-day-filter px-3 py-1 text-sm font-semibold rounded-md"
             >
-              7월 13일 (3일차)
+              7월 6일 (3일차)
             </button>
           </div>
           <div class="bg-white rounded-lg shadow-sm overflow-x-auto">
@@ -544,7 +598,7 @@
       const state = {
         activeTab: "dashboard",
         setupFilter: "All",
-        operationDay: "2025-07-11",
+        operationDay: "2025-07-04",
         soundFilter: { day: 1, time: 1 },
       };
 
@@ -552,12 +606,83 @@
 
       // --- RENDER FUNCTIONS ---
       function renderDashboard() {
- 
+        // === 진행률 차트 ===
+        const teamProgress = {};
+        const teams = [...new Set(db.setupTasks.map((t) => t.team))];
+        teams.forEach((team) => {
+          const teamTasks = db.setupTasks.filter((t) => t.team === team);
+          teamProgress[team] = {
+            total: teamTasks.length,
+            completed: teamTasks.filter((t) => t.completed).length,
+          };
+        });
+
+        const overall = {
+          total: db.setupTasks.length,
+          completed: db.setupTasks.filter((t) => t.completed).length,
+        };
+
+        if (overall.total > 0) {
+          renderDonutChart(
+            "overallProgressChart",
+            "전체",
+            overall.completed,
+            overall.total
+          );
+          renderDonutChart(
+            "audioProgressChart",
+            "오디오팀",
+            teamProgress["오디오팀"]?.completed || 0,
+            teamProgress["오디오팀"]?.total || 0
+          );
+          renderDonutChart(
+            "videoProgressChart",
+            "비디오팀",
+            teamProgress["비디오팀"]?.completed || 0,
+            teamProgress["비디오팀"]?.total || 0
+          );
+          renderDonutChart(
+            "stageProgressChart",
+            "무대팀",
+            teamProgress["무대팀"]?.completed || 0,
+            teamProgress["무대팀"]?.total || 0
+          );
+          renderDonutChart(
+            "itProgressChart",
+            "IT팀",
+            teamProgress["IT팀"]?.completed || 0,
+            teamProgress["IT팀"]?.total || 0
+          );
+        }
+
+        // === 지연된 작업 표시 ===
+        const now = new Date();
+        const delayedTasksList = document.getElementById("delayed-tasks-list");
+        delayedTasksList.innerHTML = "";
+        const delayedTasks = db.setupTasks.filter((task) => {
+          if (!task.start) return false;
+          const startTime = new Date(task.start);
+          const endTime = new Date(startTime.getTime() + task.duration * 60000);
+          return !task.completed && now > endTime;
+        });
+
+        if (delayedTasks.length > 0) {
+          delayedTasks.forEach((task) => {
+            delayedTasksList.innerHTML += `
+        <div class="flex justify-between items-center bg-red-50 p-2 rounded">
+          <span><span class="font-semibold">${task.team}</span> - ${task.task}</span>
+          <span class="text-red-600 font-bold">지연</span>
+        </div>`;
+          });
+        } else {
+          delayedTasksList.innerHTML = `<p class="text-slate-500">지연된 작업이 없습니다.</p>`;
+        }
+
         // === 음향 상태 요약 ===
         const competitionDateMap = {
-          1: "2025-07-11",
-          2: "2025-07-12",
-          3: "2025-07-13",
+          1: "2025-07-04",
+          2: "2025-07-05",
+          3: "2025-07-06",
         };
         let closestDataGroup = [];
         let dayToDisplay = 1;
