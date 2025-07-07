@@ -250,7 +250,7 @@
               현재 시점의 가장 중요한 정보들을 요약하여 보여줍니다.
             </p>
           </div>
-          <!--div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div class="bg-white p-6 rounded-lg shadow-sm">
               <h3 class="font-bold text-slate-800 mb-2">전체 공정 진행률</h3>
               <div class="chart-container h-48 w-48 mx-auto">
@@ -299,7 +299,7 @@
               
               </div>
             </div>
-          </div-->
+          </div>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
             <div class="bg-white p-6 rounded-lg shadow-sm">
               <h3 id="sound-summary-title" class="font-bold text-slate-800">
@@ -606,6 +606,78 @@
 
       // --- RENDER FUNCTIONS ---
       function renderDashboard() {
+        // === 진행률 차트 ===
+        const teamProgress = {};
+        const teams = [...new Set(db.setupTasks.map((t) => t.team))];
+        teams.forEach((team) => {
+          const teamTasks = db.setupTasks.filter((t) => t.team === team);
+          teamProgress[team] = {
+            total: teamTasks.length,
+            completed: teamTasks.filter((t) => t.completed).length,
+          };
+        });
+
+        const overall = {
+          total: db.setupTasks.length,
+          completed: db.setupTasks.filter((t) => t.completed).length,
+        };
+
+        if (overall.total > 0) {
+          renderDonutChart(
+            "overallProgressChart",
+            "전체",
+            overall.completed,
+            overall.total
+          );
+          renderDonutChart(
+            "audioProgressChart",
+            "오디오팀",
+            teamProgress["오디오팀"]?.completed || 0,
+            teamProgress["오디오팀"]?.total || 0
+          );
+          renderDonutChart(
+            "videoProgressChart",
+            "비디오팀",
+            teamProgress["비디오팀"]?.completed || 0,
+            teamProgress["비디오팀"]?.total || 0
+          );
+          renderDonutChart(
+            "stageProgressChart",
+            "무대팀",
+            teamProgress["무대팀"]?.completed || 0,
+            teamProgress["무대팀"]?.total || 0
+          );
+          renderDonutChart(
+            "itProgressChart",
+            "IT팀",
+            teamProgress["IT팀"]?.completed || 0,
+            teamProgress["IT팀"]?.total || 0
+          );
+        }
+
+        // === 지연된 작업 표시 ===
+        const now = new Date();
+        const delayedTasksList = document.getElementById("delayed-tasks-list");
+        delayedTasksList.innerHTML = "";
+        const delayedTasks = db.setupTasks.filter((task) => {
+          if (!task.start) return false;
+          const startTime = new Date(task.start);
+          const endTime = new Date(startTime.getTime() + task.duration * 60000);
+          return !task.completed && now > endTime;
+        });
+
+        if (delayedTasks.length > 0) {
+          delayedTasks.forEach((task) => {
+            delayedTasksList.innerHTML += `
+        <div class="flex justify-between items-center bg-red-50 p-2 rounded">
+          <span><span class="font-semibold">${task.team}</span> - ${task.task}</span>
+          <span class="text-red-600 font-bold">지연</span>
+        </div>`;
+          });
+        } else {
+          delayedTasksList.innerHTML = `<p class="text-slate-500">지연된 작업이 없습니다.</p>`;
+        }
+
         // === 음향 상태 요약 ===
         const competitionDateMap = {
           1: "2025-07-11",
@@ -726,7 +798,125 @@
         }
       }
 
-      
+      function renderDonutChart(canvasId, label, completed, total) {
+        const ctx = document.getElementById(canvasId).getContext("2d");
+        if (charts[canvasId]) charts[canvasId].destroy();
+
+        const percentage =
+          total > 0 ? Math.round((completed / total) * 100) : 0;
+        const data = total > 0 ? [completed, total - completed] : [0, 1];
+
+        charts[canvasId] = new Chart(ctx, {
+          type: "doughnut",
+          data: {
+            labels: ["완료", "미완료"],
+            datasets: [
+              {
+                data: data,
+                backgroundColor: ["#22c55e", "#e2e8f0"],
+                borderColor: ["#ffffff"],
+                borderWidth: 2,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: "70%",
+            plugins: {
+              legend: { display: false },
+              tooltip: { enabled: false },
+              title: {
+                display: true,
+                text: `${percentage}%`,
+                position: "bottom",
+                align: "center",
+                font: {
+                  size:
+                    window.innerWidth <= 768
+                      ? canvasId.includes("overall")
+                        ? 24
+                        : 24 // 모바일에서 더 큼
+                      : canvasId.includes("overall")
+                      ? 24
+                      : 14,
+                },
+                color: "#334155",
+                padding: {
+                  top:
+                    window.innerWidth <= 768
+                      ? canvasId.includes("overall")
+                        ? -55
+                        : -70
+                      : canvasId.includes("overall")
+                      ? -65
+                      : -35,
+                },
+              },
+            },
+          },
+        });
+      }
+
+      function renderSetupTable() {
+        const tableBody = document.getElementById("setup-tasks-table");
+        tableBody.innerHTML = "";
+        const filteredTasks = db.setupTasks.filter(
+          (task) =>
+            state.setupFilter === "All" || task.team === state.setupFilter
+        );
+        const now = new Date();
+
+        filteredTasks.forEach((task) => {
+          const startTime = task.start ? new Date(task.start) : null;
+          const endTime = startTime
+            ? new Date(startTime.getTime() + task.duration * 60000)
+            : null;
+
+          let rowClass = "";
+          if (task.completed) {
+            rowClass = "completed";
+          } else if (endTime && now > endTime) {
+            rowClass = "delayed";
+          } else if (
+            startTime &&
+            endTime &&
+            now >= startTime &&
+            now <= endTime
+          ) {
+            rowClass = "in-progress";
+          }
+
+          const tr = document.createElement("tr");
+          tr.className = `task-row border-b border-slate-200 hover:bg-slate-50 ${rowClass}`;
+          tr.innerHTML = `
+                    <td class="p-3"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-slate-200 text-slate-700">${
+                      task.team
+                    }</span></td>
+                    <td class="p-3 font-semibold">${task.task}</td>
+                    <td class="p-3">${task.person}</td>
+                    <td class="p-3">${task.duration}분</td>
+                    <td class="p-3">${
+                      startTime
+                        ? startTime.toLocaleString("ko-KR", {
+                            year: "numeric",
+                            month: "2-digit",
+                            day: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : "미정"
+                    }</td>
+                    <td class="p-3 text-center">
+                        <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500" ${
+                          task.completed ? "checked" : ""
+                        } disabled>
+                    </td>
+                `;
+          tableBody.appendChild(tr);
+        });
+      }
+
       function renderOperationSchedule() {
         const tableBody = document.getElementById("operation-schedule-table");
         tableBody.innerHTML = "";
@@ -1039,6 +1229,9 @@
           case "dashboard":
             renderDashboard();
             break;
+          case "setup":
+            renderSetupTable();
+            break;
           case "operation":
             renderOperationSchedule();
             break;
@@ -1074,6 +1267,9 @@
           });
 
         document.querySelector("nav").addEventListener("click", handleNavClick);
+        document
+          .getElementById("setup-content")
+          .addEventListener("click", handleFilterClick);
         document
           .getElementById("operation-content")
           .addEventListener("click", handleFilterClick);
