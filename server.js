@@ -114,7 +114,7 @@ app.get("/api2/white-bc-values", async (req, res) => {
     const result = [];
 
     for (const [sheetName, day] of Object.entries(dayMap)) {
-      const range = `${sheetName}!B12:P43`;
+      const range = `${sheetName}!B12:T43`;
       const response = await sheets.spreadsheets.get({
         spreadsheetId,
         ranges: [range],
