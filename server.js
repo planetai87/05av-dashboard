@@ -142,7 +142,7 @@ app.get("/api2/white-bc-values", async (req, res) => {
         const time = `${count}차 (${timeLabel})`;
         count++;
 
-        for (let i = 2; i <= 14; i++) {
+        for (let i = 2; i <= 18; i++) {
           const dbCell = values[i];
           const dbVal = parseFloat(dbCell?.formattedValue);
           if (!isNaN(dbVal)) {
