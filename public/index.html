@@ -1007,7 +1007,7 @@
               backgroundColor: (c) => getColorForDb(c.raw.v),
               borderColor: "rgba(255, 255, 255, 0.5)",
               borderWidth: 1,
-              radius: 20,
+              radius: window.innerWidth <= 768 ? 12 : 20,
             },
           ],
         };
